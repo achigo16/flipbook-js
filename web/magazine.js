@@ -18,7 +18,14 @@ var MagazineView = {
   maxScale: 2,
   init: function() {
     $("#toolbarViewerRight").prepend(
-      '<button id="magazineMode" class="toolbarButton magazineMode hiddenLargeView" title="Switch to Magazine Mode" tabindex="99" data-l10n-id="magazine_mode"><span data-l10n-id="magazine_mode_label">Magazine Mode</span></button>'
+      `<button id="magazineMode" class="toolbarButton magazineMode hiddenLargeView" title="Switch to Magazine Mode" tabindex="99" data-l10n-id="magazine_mode">
+        <span data-l10n-id="magazine_mode_label">Magazine Mode</span>
+      </button>`
+    );
+    $("#secondaryToolbarButtonContainer").prepend(
+      `<button id="secondaryMagazineMode" class="secondaryToolbarButton magazineMode visibleLargeView" title="Switch to Magazine Mode" tabindex="51" data-l10n-id="magazine_mode">
+        <span data-l10n-id="magazine_mode_label">Magazine Mode</span>
+      </button>`
     );
 
     $(document).on("click", "#magazineMode,#exitMagazineView", function(e) {
@@ -30,7 +37,7 @@ var MagazineView = {
       if (!MagazineView.magazineMode) MagazineView.start();
       else MagazineView.destroy();
 
-      SecondaryToolbar.close();
+      PDFViewerApplication.secondaryToolbar.close();
     });
 
     $(document).on("click", "#magazineContainer .previous-button", function(e) {
