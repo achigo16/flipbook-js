@@ -18,6 +18,10 @@
   text-align: center;
 }
 
+.center {
+  margin: 0 auto !important;
+}
+
 #magazine .page {
   background-color: #fff;
 }
