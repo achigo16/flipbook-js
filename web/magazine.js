@@ -29,13 +29,17 @@ var MagazineView = {
     );
 
     $(document).on("click", "#magazineMode,#exitMagazineView", function(e) {
-      if (!MagazineView.magazineMode) MagazineView.start();
-      else MagazineView.destroy();
+      if (!MagazineView.magazineMode) {
+        $("#overlay").show();
+        MagazineView.start();
+      } else MagazineView.destroy();
     });
 
     $(document).on("click", "#secondaryMagazineMode", function(e) {
-      if (!MagazineView.magazineMode) MagazineView.start();
-      else MagazineView.destroy();
+      if (!MagazineView.magazineMode) {
+        $("#overlay").show();
+        MagazineView.start();
+      } else MagazineView.destroy();
 
       PDFViewerApplication.secondaryToolbar.close();
     });
@@ -49,11 +53,14 @@ var MagazineView = {
     });
 
     if (window.location.hash.indexOf("magazineMode=true") > -1) {
+      // $("#overlay").hide();
       document.addEventListener(
         "pagesloaded",
         MagazineView.launchMagazineMode,
         true
       );
+    } else {
+      $("#overlay").hide();
     }
   },
   launchMagazineMode: function(e) {
@@ -238,6 +245,8 @@ var MagazineView = {
             else if ($(this).hasClass("zoom-icon-out"))
               $("#magazineContainer").zoom("zoomOut");
           });
+
+          $("#overlay").fadeOut();
         }, 10);
       }
     );
