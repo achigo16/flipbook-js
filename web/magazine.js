@@ -10,7 +10,11 @@ var MagazineView = {
   currentPage: 1,
   currentScale: 1,
   layout:
-    window.location.hash.indexOf("single=true") > -1 ? "single" : "double",
+    window.location.hash.indexOf("single=true") > -1
+      ? "single"
+      : $(window).width() < $(window).height()
+      ? "single"
+      : "double",
   maxScale: 2,
   init: function() {
     $("#toolbarViewerRight").prepend(
@@ -69,9 +73,7 @@ var MagazineView = {
     PDFViewerApplication.pdfViewer.currentScaleValue = "page-fit";
     $("#viewerContainer").after(
       `<div id="magazineContainer">
-        <div class="icon-holder"></div>
-        <div id="magazine"><div ignore="1" class="next-button"></div>
-        <div ignore="1" class="previous-button" style="display: block;"></div>
+        <div id="magazine"></div>
       </div>`
     );
 
