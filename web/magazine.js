@@ -92,6 +92,17 @@ var MagazineView = {
 
     $("#magazine").show();
 
+    // Change BackgroundColor
+    if (window.location.hash.indexOf("backgroundColor=") > -1) {
+      const arr = window.location.hash.split("&");
+      const findColor = arr.find(data => {
+        let arrNewData = data.split("=");
+        return arrNewData[0] === "#backgroundColor";
+      });
+      const newColor = findColor.replace("#", "").split("=");
+      document.body.style.backgroundColor = newColor[1];
+    }
+
     //$("#magazine").bind("missing", function (event, pages) {
     //    MagazineView.loadTurnJsPages(pages, this, false, false);
     //});
