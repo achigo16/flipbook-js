@@ -10,7 +10,7 @@ Upload pdfjs-flipbook into your web space
 
 ## Usage
 
-```python
+```bash
 Call by your browser http://your.domain.com/pdfjs-flipbook/web/viewer.html?file=pdf.pdf
 ```
 
