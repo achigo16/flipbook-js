@@ -164,7 +164,21 @@ var MagazineView = {
 
           if ($(window).width() > $(window).height()) {
             diff = $(window).height() - $("#magazine canvas")[0].height;
-            $("#magazine").addClass("center");
+            if (
+              ($("#magazine canvas")[0].width + diff) * multiplier >
+              $(window).width()
+            ) {
+              diff =
+                ($(window).width() - $("#magazine canvas")[0].width * 2) / 2;
+              // Make Page Vertical Center
+              $("#magazine").css({
+                margin: `${($(window).height() -
+                  ($("#magazine canvas")[0].height + diff)) /
+                  2}px 0`
+              });
+            } else {
+              $("#magazine").addClass("center");
+            }
           } else {
             diff = $(window).width() - $("#magazine canvas")[0].width;
             // Make Page Vertical Center
