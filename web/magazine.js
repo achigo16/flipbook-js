@@ -160,12 +160,23 @@ var MagazineView = {
           $("#magazine").turn("display", MagazineView.layout);
 
           var multiplier = MagazineView.layout == "double" ? 2 : 1;
+          var diff =
+            $(window).width() > $(window).height()
+              ? $(window).height() - $("#magazine canvas")[0].height
+              : $(window).width() - $("#magazine canvas")[0].width;
 
           $("#magazine").turn(
             "size",
-            $("#magazine canvas")[0].width * multiplier,
-            $("#magazine canvas")[0].height
+            ($("#magazine canvas")[0].width + diff) * multiplier,
+            $("#magazine canvas")[0].height + diff
           );
+
+          // Make Page Center
+          $("#magazine").css({
+            margin: `${($(window).height() -
+              ($("#magazine canvas")[0].height + diff)) /
+              2}px 0`
+          });
 
           if (MagazineView.currentPage > 1)
             $("#magazine").turn("page", MagazineView.currentPage);

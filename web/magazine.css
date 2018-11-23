@@ -10,13 +10,11 @@
 }
 
 #magazineContainer {
-  padding-top: 10px;
   text-align: center;
   overflow: hidden;
 }
 
 #magazine {
-  margin: 0 auto !important;
   text-align: center;
 }
 
