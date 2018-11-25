@@ -5,13 +5,13 @@ Flipbook JS is a Javascript library build by [PDF.JS](https://github.com/mozilla
 ## Installation
 
 ```bash
-Upload pdfjs-flipbook into your web space
+Upload flipbook-js into your web space
 ```
 
 ## Usage
 
 ```bash
-Call by your browser http://your.domain.com/pdfjs-flipbook/web/viewer.html?file=pdf.pdf
+Call by your browser http://your.domain.com/flipbook-js/web/viewer.html?file=pdf.pdf
 ```
 
 ## Contributing
