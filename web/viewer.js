@@ -1546,7 +1546,9 @@ var PDFViewerApplication = {
 };
 var validateFileURL = void 0;
 {
-  var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io'];
+  var link = window.location.href; // Get Current Link 
+  var arrLink = link.split("/"); // Split Link with folder
+  var HOSTED_VIEWER_ORIGINS = ['null', 'http://'+arrLink[2], 'https://'+arrLink[2]]; // Insert Link name
   validateFileURL = function validateFileURL(file) {
     if (file === undefined) {
       return;
