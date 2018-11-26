@@ -108,6 +108,7 @@ var MagazineView = {
       });
       const newColor = findColor.replace("#", "").split("=");
       document.body.style.backgroundColor = newColor[1];
+      document.body.style.backgroundImage = "none";
     }
 
     //$("#magazine").bind("missing", function (event, pages) {
