@@ -118,17 +118,22 @@ var MagazineView = {
     //    MagazineView.loadTurnJsPages(pages, this, false, false);
     //});
 
-    //$("#magazine").bind("turning", function (event, page, view) {
-    //    if (!$('#magazine').turn('hasPage', page)) {
+    $("#magazine").bind("turning", function(event, page, view) {
+      //    if (!$('#magazine').turn('hasPage', page)) {
+      //        MagazineView.loadTurnJsPages([page], this, false, true).then(function () {
+      //            $('#magazine').turn('page', page);
+      //        });
+      //        event.preventDefault();
+      //    }
 
-    //        MagazineView.loadTurnJsPages([page], this, false, true).then(function () {
-    //            $('#magazine').turn('page', page);
-    //        });
-
-    //        event.preventDefault();
-    //    }
-
-    //});
+      // Send Data when Page Change to WebView React Native
+      window.postMessage(
+        JSON.stringify({
+          page: page,
+          numberOfPages: PDFViewerApplication.pdfDocument.numPages
+        })
+      );
+    });
 
     var pages = [1];
 
@@ -243,11 +248,22 @@ var MagazineView = {
             }
           });
 
-          $(".zoom-icon").bind("click", function() {
-            if ($(this).hasClass("zoom-icon-in"))
-              $("#magazineContainer").zoom("zoomIn");
-            else if ($(this).hasClass("zoom-icon-out"))
-              $("#magazineContainer").zoom("zoomOut");
+          // Send Data when Load Complete to WebView React Native
+          window.postMessage(
+            JSON.stringify({
+              numberOfPages: PDFViewerApplication.pdfDocument.numPages,
+              width: ($("#magazine canvas")[0].width + diff) * multiplier,
+              height: $("#magazine canvas")[0].height + diff
+            })
+          );
+
+          // Get Data when WebView React Native Navigate Page
+          document.addEventListener("message", function(data) {
+            if (data.data == "nextPage") {
+              $("#magazine").turn("next");
+            } else if (data.data == "prevPage") {
+              $("#magazine").turn("previous");
+            }
           });
 
           $("#overlay").fadeOut();
