@@ -44,16 +44,7 @@ var MagazineView = {
       PDFViewerApplication.secondaryToolbar.close();
     });
 
-    $(document).on("click", "#magazineContainer .previous-button", function(e) {
-      $("#magazine").turn("previous");
-    });
-
-    $(document).on("click", "#magazineContainer .next-button", function(e) {
-      $("#magazine").turn("next");
-    });
-
     if (window.location.hash.indexOf("magazineMode=true") > -1) {
-      // $("#overlay").hide();
       document.addEventListener(
         "pagesloaded",
         MagazineView.launchMagazineMode,
@@ -114,18 +105,7 @@ var MagazineView = {
       document.body.style.backgroundImage = "none";
     }
 
-    //$("#magazine").bind("missing", function (event, pages) {
-    //    MagazineView.loadTurnJsPages(pages, this, false, false);
-    //});
-
     $("#magazine").bind("turning", function(event, page, view) {
-      //    if (!$('#magazine').turn('hasPage', page)) {
-      //        MagazineView.loadTurnJsPages([page], this, false, true).then(function () {
-      //            $('#magazine').turn('page', page);
-      //        });
-      //        event.preventDefault();
-      //    }
-
       // Send Data when Page Change to WebView React Native
       window.postMessage(
         JSON.stringify({
@@ -218,6 +198,16 @@ var MagazineView = {
             max: MagazineView.maxScale,
             flipbook: $("#magazine"),
             when: {
+              doubleTap: function(event) {
+                if ($(this).zoom("value") == 1) {
+                  $("#magazine")
+                    .removeClass("animated")
+                    .addClass("zoom-in");
+                  $(this).zoom("zoomIn", event);
+                } else {
+                  $(this).zoom("zoomOut");
+                }
+              },
               resize: function(event, scale, page, pageElement) {
                 MagazineView.currentScale = scale;
                 MagazineView.loadTurnJsPages(
@@ -292,7 +282,7 @@ var MagazineView = {
     $("#magazineContainer")
       .css({
         width: width,
-        height: height - $(".toolbar").height()
+        height: height
       })
       .zoom("resize");
 
@@ -339,21 +329,6 @@ var MagazineView = {
     }
 
     return bound;
-  },
-  cloneCanvas: function(oldCanvas) {
-    //create a new canvas
-    var newCanvas = document.createElement("canvas");
-    var context = newCanvas.getContext("2d");
-
-    //set dimensions
-    newCanvas.width = oldCanvas.width;
-    newCanvas.height = oldCanvas.height;
-
-    //apply the old canvas to the new one
-    context.drawImage(oldCanvas, 0, 0);
-
-    //return the new canvas
-    return newCanvas;
   },
   loadTurnJsPages: function(pages, magazine, isInit, defer, scale) {
     var deferred = null;
