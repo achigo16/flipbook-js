@@ -215,16 +215,15 @@ var MagazineView = {
               zoomOut: function() {
                 setTimeout(function() {
                   $("#magazine")
-                    .addClass("animated")
-                    .removeClass("zoom-in");
-                  MagazineView.resizeViewport();
-                  $("#magazine")
                     .addClass("transition")
                     .css({
                       marginTop: `${($(window).height() -
                         $("#magazine").height()) /
                         2}px`
-                    });
+                    })
+                    .addClass("animated")
+                    .removeClass("zoom-in");
+                  MagazineView.resizeViewport();
                 }, 0);
               },
               swipeLeft: function() {
@@ -317,64 +316,67 @@ var MagazineView = {
 
     var pagesRendered = 0;
     for (var i = 0; i < pages.length; i++) {
-      PDFViewerApplication.pdfDocument.getPage(pages[i]).then(function(page) {
-        var destinationCanvas = document.createElement("canvas");
+      if (pages[i] != 0)
+        PDFViewerApplication.pdfDocument.getPage(pages[i]).then(function(page) {
+          var destinationCanvas = document.createElement("canvas");
 
-        var unscaledViewport = page.getViewport(1);
-        var divider = MagazineView.layout == "double" ? 2 : 1;
+          var unscaledViewport = page.getViewport(1);
+          var divider = MagazineView.layout == "double" ? 2 : 1;
 
-        var scale = Math.min(
-          ($("#mainContainer").height() - 20) / unscaledViewport.height,
-          ($("#mainContainer").width() - 80) / divider / unscaledViewport.width
-        );
+          var scale = Math.min(
+            ($("#mainContainer").height() - 20) / unscaledViewport.height,
+            ($("#mainContainer").width() - 80) /
+              divider /
+              unscaledViewport.width
+          );
 
-        var viewport = page.getViewport(scale);
+          var viewport = page.getViewport(scale);
 
-        //var viewport = PDFViewerApplication.pdfViewer.getPageView(page.pageIndex).viewport;
+          //var viewport = PDFViewerApplication.pdfViewer.getPageView(page.pageIndex).viewport;
 
-        if (MagazineView.currentScale > 1)
-          viewport = page.getViewport(MagazineView.currentScale);
+          if (MagazineView.currentScale > 1)
+            viewport = page.getViewport(MagazineView.currentScale);
 
-        destinationCanvas.height = viewport.height; // - ((viewport.height / 100) * 10);
-        destinationCanvas.width = viewport.width; // - ((viewport.width / 100) * 10);
+          destinationCanvas.height = viewport.height; // - ((viewport.height / 100) * 10);
+          destinationCanvas.width = viewport.width; // - ((viewport.width / 100) * 10);
 
-        var renderContext = {
-          canvasContext: destinationCanvas.getContext("2d"),
-          viewport: viewport
-        };
+          var renderContext = {
+            canvasContext: destinationCanvas.getContext("2d"),
+            viewport: viewport
+          };
 
-        page.render(renderContext).promise.then(function() {
-          pagesRendered++;
+          page.render(renderContext).promise.then(function() {
+            pagesRendered++;
 
-          destinationCanvas.setAttribute("data-page-number", page.pageNumber);
-          destinationCanvas.id = "magCanvas" + page.pageNumber;
+            destinationCanvas.setAttribute("data-page-number", page.pageNumber);
+            destinationCanvas.id = "magCanvas" + page.pageNumber;
 
-          if (!isInit) {
-            if ($(magazine).turn("hasPage", page.pageNumber)) {
-              var oldCanvas = $("#magCanvas" + page.pageNumber)[0];
-              oldCanvas.width = destinationCanvas.width;
-              oldCanvas.height = destinationCanvas.height;
+            if (!isInit) {
+              if ($(magazine).turn("hasPage", page.pageNumber)) {
+                var oldCanvas = $("#magCanvas" + page.pageNumber)[0];
+                oldCanvas.width = destinationCanvas.width;
+                oldCanvas.height = destinationCanvas.height;
 
-              //oldCanvas.setAttribute('style', 'float: left; position: absolute; top: 0px; left: 0px; bottom: auto; right: auto;')
+                //oldCanvas.setAttribute('style', 'float: left; position: absolute; top: 0px; left: 0px; bottom: auto; right: auto;')
 
-              //$(magazine).turn('removePage', page.pageNumber);
-              var oldCtx = oldCanvas.getContext("2d");
+                //$(magazine).turn('removePage', page.pageNumber);
+                var oldCtx = oldCanvas.getContext("2d");
 
-              oldCtx.drawImage(destinationCanvas, 0, 0);
+                oldCtx.drawImage(destinationCanvas, 0, 0);
+              } else {
+                $(magazine).turn(
+                  "addPage",
+                  $(destinationCanvas),
+                  page.pageNumber
+                );
+              }
             } else {
-              $(magazine).turn(
-                "addPage",
-                $(destinationCanvas),
-                page.pageNumber
-              );
+              $("#magazine").append($(destinationCanvas));
             }
-          } else {
-            $("#magazine").append($(destinationCanvas));
-          }
 
-          if (pagesRendered == pages.length) if (deferred) deferred.resolve();
+            if (pagesRendered == pages.length) if (deferred) deferred.resolve();
+          });
         });
-      });
     }
 
     if (deferred) return deferred;
