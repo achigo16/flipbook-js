@@ -105,16 +105,6 @@ var MagazineView = {
       document.body.style.backgroundImage = "none";
     }
 
-    $("#magazine").bind("turning", function(event, page, view) {
-      // Send Data when Page Change to WebView React Native
-      window.postMessage(
-        JSON.stringify({
-          page: page,
-          numberOfPages: PDFViewerApplication.pdfDocument.numPages
-        })
-      );
-    });
-
     var pages = [1];
 
     MagazineView.loadTurnJsPages(pages, $("#magazine"), true, true).then(
@@ -201,6 +191,7 @@ var MagazineView = {
               doubleTap: function(event) {
                 if ($(this).zoom("value") == 1) {
                   $("#magazine")
+                    .removeClass("transition")
                     .removeClass("animated")
                     .addClass("zoom-in");
                   $(this).zoom("zoomIn", event);
@@ -227,6 +218,13 @@ var MagazineView = {
                     .addClass("animated")
                     .removeClass("zoom-in");
                   MagazineView.resizeViewport();
+                  $("#magazine")
+                    .addClass("transition")
+                    .css({
+                      marginTop: `${($(window).height() -
+                        $("#magazine").height()) /
+                        2}px`
+                    });
                 }, 0);
               },
               swipeLeft: function() {
@@ -235,24 +233,6 @@ var MagazineView = {
               swipeRight: function() {
                 $("#magazine").turn("previous");
               }
-            }
-          });
-
-          // Send Data when Load Complete to WebView React Native
-          window.postMessage(
-            JSON.stringify({
-              numberOfPages: PDFViewerApplication.pdfDocument.numPages,
-              width: ($("#magazine canvas")[0].width + diff) * multiplier,
-              height: $("#magazine canvas")[0].height + diff
-            })
-          );
-
-          // Get Data when WebView React Native Navigate Page
-          document.addEventListener("message", function(data) {
-            if (data.data == "nextPage") {
-              $("#magazine").turn("next");
-            } else if (data.data == "prevPage") {
-              $("#magazine").turn("previous");
             }
           });
 
