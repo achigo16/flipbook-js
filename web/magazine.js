@@ -16,6 +16,8 @@ var MagazineView = {
       ? "single"
       : "double",
   maxScale: 2,
+  isMobile: false,
+  isZoom: false,
   init: function() {
     $("#toolbarViewerRight").prepend(
       `<button id="magazineMode" class="toolbarButton magazineMode hiddenLargeView" title="Switch to Magazine Mode" tabindex="99" data-l10n-id="magazine_mode">
@@ -105,6 +107,11 @@ var MagazineView = {
       document.body.style.backgroundImage = "none";
     }
 
+    //Detect Mobile Device
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      MagazineView.isMobile = true;
+    }
+
     var pages = [1];
 
     MagazineView.loadTurnJsPages(pages, $("#magazine"), true, true).then(
@@ -150,29 +157,24 @@ var MagazineView = {
 
           if ($(window).width() > $(window).height()) {
             diff = $(window).height() - $("#magazine canvas")[0].height;
-            if (
-              ($("#magazine canvas")[0].width + diff) * multiplier >
-              $(window).width()
-            ) {
-              diff =
-                ($(window).width() - $("#magazine canvas")[0].width * 2) / 2;
-              // Make Page Vertical Center
+
+            if ( ($("#magazine canvas")[0].width + diff) * multiplier > $(window).width() && !MagazineView.isMobile ) {
+              diff = ($(window).width() - $("#magazine canvas")[0].width * 2) / 2;
+
               $("#magazine").css({
-                margin: `${($(window).height() -
-                  ($("#magazine canvas")[0].height + diff)) /
-                  2}px 0`
+                margin: `${($(window).height() - ($("#magazine canvas")[0].height + diff)) / 2}px 0`
               });
             } else {
               $("#magazine").addClass("center");
             }
           } else {
             diff = $(window).width() - $("#magazine canvas")[0].width;
-            // Make Page Vertical Center
-            $("#magazine").css({
-              margin: `${($(window).height() -
-                ($("#magazine canvas")[0].height + diff)) /
-                2}px 0`
-            });
+            if(!MagazineView.isMobile)
+              $("#magazine").css({
+                margin: `${($(window).height() - ($("#magazine canvas")[0].height + diff)) / 2}px 0`
+              });
+            else
+            $("#magazine").addClass("center");
           }
 
           $("#magazine").turn(
@@ -184,56 +186,61 @@ var MagazineView = {
           if (MagazineView.currentPage > 1)
             $("#magazine").turn("page", MagazineView.currentPage);
 
-          $("#magazineContainer").zoom({
-            max: MagazineView.maxScale,
-            flipbook: $("#magazine"),
-            when: {
-              doubleTap: function(event) {
-                if ($(this).zoom("value") == 1) {
-                  $("#magazine")
-                    .removeClass("transition")
-                    .removeClass("animated")
-                    .addClass("zoom-in");
-                  $(this).zoom("zoomIn", event);
-                } else {
-                  $(this).zoom("zoomOut");
-                }
-              },
-              resize: function(event, scale, page, pageElement) {
-                MagazineView.currentScale = scale;
-                MagazineView.loadTurnJsPages(
-                  $("#magazine").turn("view"),
-                  $("#magazine"),
-                  false,
-                  false
-                );
-              },
-              zoomIn: function() {
-                $("#magazine").addClass("zoom-in");
-                MagazineView.resizeViewport();
-              },
-              zoomOut: function() {
-                setTimeout(function() {
-                  $("#magazine")
-                    .addClass("transition")
-                    .css({
-                      marginTop: `${($(window).height() -
-                        $("#magazine").height()) /
-                        2}px`
-                    })
-                    .addClass("animated")
-                    .removeClass("zoom-in");
+          if(!MagazineView.isMobile)
+            $("#magazineContainer").zoom({
+              max: MagazineView.maxScale,
+              flipbook: $("#magazine"),
+              when: {
+                doubleTap: function(event) {
+                  if ($(this).zoom("value") == 1) {
+                    $("#magazine").removeClass("transition").removeClass("animated").addClass("zoom-in");
+                    $(this).zoom("zoomIn", event);
+                  } else {
+                    $(this).zoom("zoomOut");
+                  }
+                },
+                resize: function(event, scale, page, pageElement) {
+                  MagazineView.currentScale = scale;
+                  MagazineView.loadTurnJsPages(
+                    $("#magazine").turn("view"),
+                    $("#magazine"),
+                    false,
+                    false
+                  );
+                },
+                zoomIn: function() {
+                  $("#magazine").addClass("zoom-in");
                   MagazineView.resizeViewport();
-                }, 0);
-              },
-              swipeLeft: function() {
-                $("#magazine").turn("next");
-              },
-              swipeRight: function() {
-                $("#magazine").turn("previous");
+                },
+                zoomOut: function() {
+                  setTimeout(function() {
+                    $("#magazine").addClass("transition")
+                      .css({
+                        marginTop: `${($(window).height() -
+                          $("#magazine").height()) /
+                          2}px`
+                      })
+                      .addClass("animated")
+                      .removeClass("zoom-in");
+                    MagazineView.resizeViewport();
+                  }, 0);
+                }
               }
-            }
-          });
+            });
+          else {
+            new window.PinchZoom.default(
+              document.querySelector("#magazineContainer"),
+              { zoomOutFactor: 1, use2d: false }
+            );
+            document.addEventListener("pz_doubletap", function() {
+              $("#magazine").turn("disable", !MagazineView.isZoom);
+              MagazineView.isZoom = !MagazineView.isZoom;
+            });
+            document.addEventListener("pz_zoomend", function() {
+              $("#magazine").turn("disable", !MagazineView.isZoom);
+              MagazineView.isZoom = !MagazineView.isZoom;
+            });
+          }
 
           $("#overlay").fadeOut();
         }, 10);
