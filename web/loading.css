@@ -44,10 +44,10 @@
   animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
 .lds-ripple div:nth-child(1) {
-  border-color: #0055a5;
+  border-color: #2f80ed;
 }
 .lds-ripple div:nth-child(2) {
-  border-color: #45aee7;
+  border-color: #0055ba;
   -webkit-animation-delay: -0.5s;
   animation-delay: -0.5s;
 }
