@@ -19,6 +19,9 @@ var MagazineView = {
   isMobile: false,
   isZoom: false,
   init: function() {
+    //Add button download on magazineMode
+
+
     $("#toolbarViewerRight").prepend(
       `<button id="magazineMode" class="toolbarButton magazineMode hiddenLargeView" title="Switch to Magazine Mode" tabindex="99" data-l10n-id="magazine_mode">
         <span data-l10n-id="magazine_mode_label">Magazine Mode</span>
@@ -29,7 +32,7 @@ var MagazineView = {
         <span data-l10n-id="magazine_mode_label">Magazine Mode</span>
       </button>`
     );
-
+      
     $(document).on("click", "#magazineMode,#exitMagazineView", function(e) {
       if (!MagazineView.magazineMode) {
         $("#overlay").show();
@@ -63,6 +66,11 @@ var MagazineView = {
       true
     );
     $("#magazineMode").click();
+    if(MagazineView.magazineMode){
+      $('#btn-download').show()
+    }else{
+      $('#btn-download').hide()
+    }
   },
   configureToolbars: function() {
     if (MagazineView.magazineMode) {
