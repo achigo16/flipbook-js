@@ -66,10 +66,12 @@ var MagazineView = {
       true
     );
     $("#magazineMode").click();
-    if(MagazineView.magazineMode){
-      $('#btn-download').show()
-    }else{
-      $('#btn-download').hide()
+    if(window.allow_download == 'true'){
+      if(MagazineView.magazineMode){
+        $('#btn-download').show()
+      }else{
+        $('#btn-download').hide()
+      }
     }
   },
   configureToolbars: function() {
