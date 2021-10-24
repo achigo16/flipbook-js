@@ -1597,7 +1597,13 @@ function webViewerInitialized() {
   var queryString = document.location.search.substring(1);
   var params = (0, _ui_utils.parseQueryString)(queryString);
   file = 'file' in params ? params.file : _app_options.AppOptions.get('defaultUrl');
+
   validateFileURL(file);
+  var url_download = `${window.location.origin}/web/${file}`
+  window.url_download = url_download
+
+  console.log(params)
+
   var fileInput = document.createElement('input');
   fileInput.id = appConfig.openFileInputName;
   fileInput.className = 'fileInput';

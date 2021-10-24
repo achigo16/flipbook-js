@@ -44,6 +44,20 @@
     <script src="../build/pdf.js"></script>
 
     <script src="viewer.js"></script>
+    <style>
+      #btn-download{
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 99999;
+        padding: 10px;
+        background: #ddd;
+        border-radius: 10px;
+        border: 2px solid lightgray;
+        cursor: pointer;
+
+      }
+    </style>
   </head>
 
   <body tabindex="1" class="loadingInProgress">
@@ -53,6 +67,9 @@
       </div>
     </div>
     <div id="outerContainer">
+      <button id="btn-download" style="display: none;" onclick="window.open(window.url_download)">
+        DOWNLOAD
+      </button>
       <div id="sidebarContainer">
         <div id="toolbarSidebar">
           <div class="splitToolbarButton toggled">
